@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Card from "react-bootstrap/Card";
@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Container from "react-bootstrap/Container";
 import Modal from "react-bootstrap/Modal";
 
-function ProductDetails() {
+function ProductDetails({ onDeleteProduct }) {
     const { id } = useParams();
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
@@ -26,10 +26,11 @@ function ProductDetails() {
             });
     }, [id]);
 
-    const handleDelete = async () => {
+    const handleDelete = useCallback(async () => {
         try {
             const res = await axios.delete(`https://fakestoreapi.com/products/${id}`);
             console.log("Deleted product:", res.data);
+            onDeleteProduct(product.id);
             navigate("/products");
         } catch (err) {
             console.log("Delete failed:", err);
@@ -37,7 +38,7 @@ function ProductDetails() {
         } finally {
             setShowModal(false);
         }
-    };
+    }, [id, navigate, onDeleteProduct, product]);
 
     if (loading) return <p>Loading products...</p>;
     if (error) return <p>{error}</p>;
