@@ -1,10 +1,15 @@
 import axios from "axios";
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
 import Button from 'react-bootstrap/Button';
+import Alert from "react-bootstrap/Alert";
 
 function ProductUpdate() {
+    const { id } = useParams();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        id: '',
         title: '',
         description: '',
         category: '',
@@ -22,32 +27,11 @@ function ProductUpdate() {
         }));
     };
 
-    const validateForm = () => {
-        const { id, title, description, category, price } = formData;
-        if (
-            id.trim() === '' ||
-            title.trim() === '' ||
-            description.trim() === '' ||
-            category.trim() === '' ||
-            price.trim() === ''
-        ) {
-            setSuccess('');
-            setError('ID, Title, Description, Category, and Price are required.');
-            return false;
-        }
-        setError('');
-        return true;
-    };
-
     const handleProductUpdate = async (event) => {
         event.preventDefault();
 
-        if (!validateForm()) {
-            return;
-        }
-
         try {
-            const { id, title, description, category, price } = formData;
+            const { title, description, category, price } = formData;
             const response = await axios.put(
                 `https://fakestoreapi.com/products/${id}`,
                 {
@@ -64,6 +48,9 @@ function ProductUpdate() {
             );
             setSuccess('Product updated successfully!');
             setError('');
+            setTimeout(() => {
+                navigate(`/products/${id}`);
+            }, 1500);
             console.log('Update response:', response.data);
         } catch (error) {
             setError('Failed to update product.');
@@ -75,103 +62,75 @@ function ProductUpdate() {
     // Fetch product data when component mounts or ID changes and pre-fill the form
     useEffect(() => {
         const fetchProduct = async () => {
-            if (!formData.id) {
-                // Set a default ID if none is present
-                setFormData((prev) => ({ ...prev, id: '1' }));
-                return;
-            }
             try {
-                const response = await axios.get(`https://fakestoreapi.com/products/${formData.id}`);
+                const response = await axios.get(`https://fakestoreapi.com/products/${id}`);
                 const { title, description, category, price } = response.data;
-                setFormData((prev) => ({
-                    ...prev,
+                setFormData({
                     title: title || '',
                     description: description || '',
                     category: category || '',
                     price: price !== undefined ? String(price) : '',
-                }));
+                });
                 setError('');
             } catch (err) {
                 setError('Product not found.');
                 setSuccess('');
-                setFormData((prev) => ({
-                    ...prev,
-                    title: '',
-                    description: '',
-                    category: '',
-                    price: '',
-                }));
+                console.error("Failed to fetch product:", err);
             }
         };
         fetchProduct();
-        // Only fetch when id changes and is not empty
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [formData.id]);
+    }, [id]);
 
     return (
-        <div>
+        <Container className="mt-5">
             <h2 className="mb-5">Update Fashion Product</h2>
-            <form onSubmit={handleProductUpdate}>
-                {error && <div style={{ color: 'red' }}>{error}</div>}
-                {success && <div style={{ color: 'green' }}>{success}</div>}
-                <div>
-                    <label htmlFor="id">Product ID:</label><br/>
-                    <input
-                        type="number"
-                        id="id"
-                        name="id"
-                        value={formData.id}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="title">Product Title:</label><br/>
-                    <input
+            {error && <Alert variant="danger">{error}</Alert>}
+            {success && <Alert variant="success">{success}</Alert>}
+            <Form onSubmit={handleProductUpdate}>
+                <Form.Group className="mb-3">
+                    <Form.Label>Product Title:</Form.Label>
+                    <Form.Control
                         type="text"
-                        id="title"
                         name="title"
                         value={formData.title}
                         onChange={handleChange}
                         placeholder="Product title"
                     />
-                </div>
-                <div>
-                    <label htmlFor="description">Description:</label><br/>
-                    <input
-                        type="text"
-                        id="description"
+                </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>Description:</Form.Label>
+                    <Form.Control
+                        as="textarea"
+                        rows={3}
                         name="description"
                         value={formData.description}
                         onChange={handleChange}
                         placeholder="Product description"
                     />
-                </div>
-                <div>
-                    <label htmlFor="category">Category:</label><br/>
-                    <input
+                </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>Category:</Form.Label>
+                    <Form.Control
                         type="text"
-                        id="category"
                         name="category"
                         value={formData.category}
                         onChange={handleChange}
                         placeholder="Product category"
                     />
-                </div>
-                <div>
-                    <label htmlFor="price">Price:</label><br/>
-                    <input
+                </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>Price:</Form.Label>
+                    <Form.Control
                         type="number"
-                        id="price"
                         name="price"
                         value={formData.price}
                         onChange={handleChange}
                         placeholder="Product price"
                     />
-                </div><br/>
-                <button  type="submit">Update</button>
-            </form>
-            
-        </div>
+                </Form.Group>
+                <Button variant="primary" type="submit">Update</Button>
+            </Form>
+        </Container>
     );
 }
 export default ProductUpdate;

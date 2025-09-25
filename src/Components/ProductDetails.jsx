@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Card from "react-bootstrap/Card";
 import Button from 'react-bootstrap/Button';
@@ -30,12 +30,12 @@ function ProductDetails() {
         try {
             const res = await axios.delete(`https://fakestoreapi.com/products/${id}`);
             console.log("Deleted product:", res.data);
-            setShowModal(false);
             navigate("/products");
         } catch (err) {
             console.log("Delete failed:", err);
-            setShowModal(false);
             alert("Failed to delete product.");
+        } finally {
+            setShowModal(false);
         }
     };
 
@@ -57,7 +57,10 @@ function ProductDetails() {
                     <Card.Text className="text-muted" style={{ fontSize: "0.95rem" }}>{product.description}</Card.Text>
                     <Card.Text className="fw-bold mb-1">${product.price}</Card.Text>
                     <Card.Text className="text-secondary mb-3">{product.category}</Card.Text>
-                    <Button variant="success" className="w-100 mb-2">Add to Cart</Button>
+                    <Button variant="secondary" className="w-100 mb-2">Add to Cart</Button>
+                    <Button as={Link} to={`/productupdate/${id}`} variant="success" className="w-100 mb-2">
+                        Edit
+                    </Button>
                     <Button variant="danger" className="w-100" onClick={() => setShowModal(true)}>
                         Delete
                     </Button>

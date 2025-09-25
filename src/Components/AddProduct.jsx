@@ -72,7 +72,13 @@ function AddProduct() {
                 {/* Price */}
                 <Form.Group className="mb-3">
                     <Form.Label>Price</Form.Label>
-                    <Form.Control type="numbers" placeholder="Enter a price" name="price" value={formData.price} onChange={handleChange} required />
+                    <Form.Control type="number" placeholder="Enter a price" name="price" value={formData.price} onChange={handleChange} required />
+                </Form.Group>
+
+                {/* Image */}
+                <Form.Group className="mb-3">
+                    <Form.Label>Image URL</Form.Label>
+                    <Form.Control type="text" placeholder="Enter an image URL" name="image" value={formData.image} onChange={handleChange} required />
                 </Form.Group>
 
                 <Button variant="primary" type="submit">

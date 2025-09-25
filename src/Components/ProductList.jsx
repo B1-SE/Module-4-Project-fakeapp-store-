@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 function ProductList() {
     const [products, setProducts] = useState([]);
@@ -23,8 +23,9 @@ function ProductList() {
                 setProducts(response.data);
                 setLoading(false);
             })
-            .catch(() => {
-                setError("Failed to fetch products.");
+            .catch((err) => {
+                console.error("API call failed:", err);
+                setError("Failed to fetch products. Please check your network connection.");
                 setLoading(false);
             })
     }, []);
@@ -35,16 +36,18 @@ function ProductList() {
     return (
         <>
             <Container className="pt-4 mt-4">
-                <Row>
+                <Row className="g-4">
                     {products.map((product) => (
-                        <Col key={product.id} md={4} className="mb-3">
-                            <Card>
-                                <Card.Img variant="top" src={product.image} alt={product.title} />
-                                <Card.Body>
-                                    <Card.Title>{product.title}</Card.Title>
-                                    <Card.Text>${product.price}</Card.Text>
+                        <Col key={product.id} md={4} className="mb-3 d-flex">
+                            <Card className="product-card h-100 d-flex flex-column w-100">
+                                <div className="card-img-container">
+                                    <img className="product-image" src={product.image} alt={product.title} />
+                                </div>
+                                <Card.Body className="d-flex flex-column">
+                                    <Card.Title className="product-title">{product.title}</Card.Title>
+                                    <Card.Text className="price">${product.price}</Card.Text>
+                                    <Button as={Link} to={`/products/${product.id}`} variant="primary" className="mt-auto w-100">View Details</Button>
                                 </Card.Body>
-                                <Link className="custom-button" to={`/products/${product.id}`}>View Details</Link>
                             </Card>
                         </Col>
                     ))}

@@ -24,8 +24,6 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -74,51 +72,43 @@ button:focus-visible {
   color:white;
 }
 
+/* Product grid normalization */
+.card-img-container {
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: #fff;
+}
+
 .product-image {
-  width:200px !important;
-  margin:auto
-}
-.product-card {
-  width: 500px;
-}
-
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+  max-height: 100%;
+  max-width: 100%;
+  width: auto !important;
+  height: auto;
+  object-fit: contain;
 }
 
 .product-card {
-  padding: 2em;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-title {
+  font-size: 1rem;
+  line-height: 1.2;
+  min-height: 2.4em; /* two lines reserve */
+  overflow: hidden;
+}
+
+.price {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.card {
+  /* Keep padding modest so heights align better */
+  padding: 1rem;
 }
 
 .read-the-docs {
